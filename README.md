@@ -2,6 +2,10 @@
 Test area for my experiments with Akka and its sub-projects.   
 Also works as general notes for myself on my findings.
 
+#Links
+http://doc.akka.io/docs/akka/2.4.0/common/cluster.html   
+http://doc.akka.io/docs/akka/2.4.0/scala/cluster-usage.html
+
 #Findings
 
 ##Akka Cluster
