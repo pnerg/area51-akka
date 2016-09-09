@@ -17,4 +17,7 @@ This makes it rather hard wired, one can't just add a new "service" ad-hoc into 
 * Cluster.joinSeedNodes allows for manual joining without the need to configure in the akka config
 * Creating multiple actors that start a cluster in the same actor system will not start more clusters.   
 One will only end up with mutliple actors receiving the same cluster events
- 
+
+##Cluster Extensions
+
+* Sending a message using the mediator towards a non-existing service/actor or sending before the cluster is setup just results in the message to be lost into void. No logging or nothing
