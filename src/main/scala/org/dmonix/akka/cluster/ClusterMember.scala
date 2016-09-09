@@ -34,12 +34,11 @@ class ClusterMember extends Actor with ActorLogging  {
   override def postStop(): Unit = cluster.unsubscribe(self)
   def receive = {
     case MemberUp(member) =>
-      log.info("Member is Up: {}", member.address)
+      log.info(s"Member is Up: [${member.address} with roles [${member.roles}]]")
     case UnreachableMember(member) =>
       log.info("Member detected as unreachable: {}", member)
     case MemberRemoved(member, previousStatus) =>
-      log.info("Member is Removed: {} after {}",
-        member.address, previousStatus)
+      log.info("Member is Removed: {} after {}", member.address, previousStatus)
     case _: MemberEvent => // ignore
   }
 
