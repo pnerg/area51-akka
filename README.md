@@ -15,6 +15,6 @@ Trying to join in to a cluster with a different actor system name will render lo
 * Roles are configured in the Akka config  
 This makes it rather hard wired, one can't just add a new "service" ad-hoc into the cluster from an already started actor system
 * Cluster.joinSeedNodes allows for manual joining without the need to configure in the akka config
-* Creating muliple actors that start a cluster in the same actor system will not start more clusters.   
+* Creating multiple actors that start a cluster in the same actor system will not start more clusters.   
 One will only end up with mutliple actors receiving the same cluster events
  
