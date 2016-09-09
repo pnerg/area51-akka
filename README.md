@@ -14,4 +14,5 @@ http://doc.akka.io/docs/akka/2.4.0/scala/cluster-usage.html
 Trying to join in to a cluster with a different actor system name will render logging and dropped messages
 * Roles are configured in the Akka config  
 This makes it rather hard wired, one can't just add a new "service" ad-hoc into the cluster from an already started actor system
+* Cluster.joinSeedNodes allows for manual joining without the need to configure in the akka config
  
