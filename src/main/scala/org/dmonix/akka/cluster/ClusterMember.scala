@@ -10,18 +10,18 @@
  */
 package org.dmonix.akka.cluster
 
+import akka.actor.{Actor, ActorLogging, ActorSystem, Props}
 import akka.cluster.Cluster
 import akka.cluster.ClusterEvent._
-import akka.actor.{Actor, ActorLogging, ActorSystem, Props}
 
-object ClusterSeed {
-  def props = Props(new ClusterSeed)
+object ClusterMember {
+  def props = Props(new ClusterMember)
 }
 
 /**
-  * @author Peter Nerg
+  * @author Peter Nerg.
   */
-class ClusterSeed extends Actor with ActorLogging {
+class ClusterMember extends Actor with ActorLogging  {
 
   val cluster = Cluster(context.system)
 
@@ -30,8 +30,8 @@ class ClusterSeed extends Actor with ActorLogging {
     cluster.subscribe(self, initialStateMode = InitialStateAsEvents,
       classOf[MemberEvent], classOf[UnreachableMember])
   }
-  override def postStop(): Unit = cluster.unsubscribe(self)
 
+  override def postStop(): Unit = cluster.unsubscribe(self)
   def receive = {
     case MemberUp(member) =>
       log.info("Member is Up: {}", member.address)
@@ -42,12 +42,15 @@ class ClusterSeed extends Actor with ActorLogging {
         member.address, previousStatus)
     case _: MemberEvent => // ignore
   }
+
 }
 
-object StartClusterSeed extends App {
-  System.setProperty("config.file", "src/main/resources/akka-cfg/cluster-seed-tcp.conf");
+
+object StartClusterMember extends App {
+  System.setProperty("config.file", "src/main/resources/akka-cfg/cluster-member-tcp.conf");
 
   val actorSystem = ActorSystem("ClusterTest")
 
-  actorSystem.actorOf(ClusterSeed.props)
+  actorSystem.actorOf(ClusterMember.props)
+
 }
