@@ -25,6 +25,7 @@ object ClusterMember {
 class ClusterMember extends Actor with ActorLogging  {
 
   val cluster = Cluster(context.system)
+  //members that join should NOT include themselves in the seed list
   cluster.joinSeedNodes(immutable.Seq(Address("akka.tcp", "ClusterTest", "127.0.0.1", 6969)))
 
   // subscribe to cluster changes, re-subscribe when restart
@@ -52,6 +53,7 @@ object StartClusterMember extends App {
 
   val actorSystem = ActorSystem("ClusterTest")
 
+  actorSystem.actorOf(ClusterMember.props)
   actorSystem.actorOf(ClusterMember.props)
 
 }

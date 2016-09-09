@@ -38,7 +38,7 @@ class ClusterSeed extends Actor with ActorLogging {
 
   def receive = {
     case MemberUp(member) =>
-      log.info(s"Member is Up: [${member.address} with roles [${member.roles}]]")
+      log.info(s"Member is Up: [${member.address}] with roles [${member.roles}]] and status [${member.status}] and unique address [${member.uniqueAddress}]")
     case UnreachableMember(member) =>
       log.info("Member detected as unreachable: {}", member)
     case MemberRemoved(member, previousStatus) =>
