@@ -10,9 +10,10 @@
  */
 package org.dmonix.akka.cluster
 
-import akka.actor.{Actor, ActorLogging, ActorSystem, Props}
+import akka.actor.{Actor, ActorLogging, ActorSystem, Address, Props}
 import akka.cluster.Cluster
 import akka.cluster.ClusterEvent._
+import scala.collection._
 
 object ClusterMember {
   def props = Props(new ClusterMember)
@@ -24,6 +25,7 @@ object ClusterMember {
 class ClusterMember extends Actor with ActorLogging  {
 
   val cluster = Cluster(context.system)
+  cluster.joinSeedNodes(immutable.Seq(Address("akka.tcp", "ClusterTest", "127.0.0.1", 6969)))
 
   // subscribe to cluster changes, re-subscribe when restart
   override def preStart(): Unit = {
