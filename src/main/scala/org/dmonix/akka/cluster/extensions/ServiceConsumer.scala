@@ -7,7 +7,6 @@ import akka.cluster.pubsub.DistributedPubSubMediator.Send
 import org.dmonix.akka.cluster.SameThreadExecutionContext
 
 import scala.collection.immutable
-import scala.concurrent.ExecutionContext
 
 case class Message(s:String)
 case class Response(s:String)
@@ -17,9 +16,6 @@ object ServiceConsumer {
 }
 
 class ServiceConsumer(mediator:ActorRef) extends Actor with ActorLogging {
-//  val cluster = Cluster(context.system)
-//  cluster.joinSeedNodes(immutable.Seq(Address("akka.tcp", "ClusterTest", "127.0.0.1", 6969)))
-  // activate the extension
 
   mediator ! Send("/user/ServiceA", "Hello", false)
   mediator ! Send("/user/ServiceA", "Hello", false)
