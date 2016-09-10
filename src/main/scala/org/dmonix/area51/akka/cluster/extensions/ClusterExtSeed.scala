@@ -12,7 +12,7 @@ import org.dmonix.area51.akka.cluster.ClusterSettings
   * It doesn't do anything apart from logging who joins/leaves.
   * @author Peter Nerg
   */
-class ServiceRegistry(cluster:Cluster) extends Actor with ActorLogging {
+class ClusterExtSeed(cluster:Cluster) extends Actor with ActorLogging {
   // subscribe to cluster changes, re-subscribe when restart
   override def preStart(): Unit = {
     cluster.subscribe(self, initialStateMode = InitialStateAsEvents,
@@ -33,7 +33,7 @@ class ServiceRegistry(cluster:Cluster) extends Actor with ActorLogging {
   }
 }
 
-object StartServiceRegistry extends App with ClusterSettings {
+object StartClusterExtSeed extends App with ClusterSettings {
   //the only config file with hard wired port
   System.setProperty("config.file", "src/main/resources/akka-cfg/cluster-ext-seed-tcp.conf");
 
@@ -47,7 +47,7 @@ object StartServiceRegistry extends App with ClusterSettings {
   //this is needed as otherwise this actor system will spew logs about dropped messages from the remote mediator instances
   DistributedPubSub(actorSystem).mediator
 
-  actorSystem.actorOf(Props(new ServiceRegistry(cluster)))
+  actorSystem.actorOf(Props(new ClusterExtSeed(cluster)))
 
 }
 
