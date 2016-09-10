@@ -16,7 +16,7 @@ import akka.cluster.ClusterEvent._
 
 /**
   * This class just acts as a cluster seed.
-  * That is a connection point for all other member to join in to.
+  * That is a connection point for all other members to join in to.
   * It doesn't do anything apart from logging who joins/leaves.
   * @author Peter Nerg
   */

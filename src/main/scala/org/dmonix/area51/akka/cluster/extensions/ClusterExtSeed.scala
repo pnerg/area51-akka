@@ -8,6 +8,8 @@ import org.dmonix.area51.akka.cluster.ClusterSettings
 
 /**
   * Acts as a registry and cluster seed for both the ServiceProvider and ServiceConsumer classes
+  * That is a connection point for all other members to join in to.
+  * It doesn't do anything apart from logging who joins/leaves.
   * @author Peter Nerg
   */
 class ServiceRegistry(cluster:Cluster) extends Actor with ActorLogging {
@@ -41,6 +43,8 @@ object StartServiceRegistry extends App with ClusterSettings {
 
   //even the seed node must join in as otherwise it won't be part of the cluster
   cluster.joinSeedNodes(seedNodes)
+
+  //this is needed as otherwise this actor system will spew logs about dropped messages from the remote mediator instances
   DistributedPubSub(actorSystem).mediator
 
   actorSystem.actorOf(Props(new ServiceRegistry(cluster)))
