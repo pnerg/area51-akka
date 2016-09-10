@@ -39,7 +39,7 @@ object ServiceProviderStarter extends App with ClusterSettings {
 
   def registerService(serviceName:String): Unit = {
     val actor = actorSystem.actorOf(Props(new ServiceProvider), serviceName)
-    mediator ! Put(actor)
+    mediator ! Put(actor) //this registers the actor to the cluster using the name of the actor (/user/serviceName)
   }
 
   registerService("ServiceA")
