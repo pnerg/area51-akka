@@ -3,11 +3,13 @@ package org.dmonix.area51.akka.cluster.extensions
 import akka.actor.{Actor, ActorLogging, ActorRef, ActorSystem, Props}
 import akka.cluster.Cluster
 import akka.cluster.pubsub.DistributedPubSub
-import akka.cluster.pubsub.DistributedPubSubMediator.{Publish, Send, SendToAll}
+import akka.cluster.pubsub.DistributedPubSubMediator.Publish
 import org.dmonix.area51.akka.cluster.Messages.{Broadcast, Message, Response, Unicast}
 import org.dmonix.area51.akka.cluster.{ClusterSettings, SameThreadExecutionContext}
 
 /**
+  * Works as a publisher in the publish/subscribe pattern provided by the cluster extensions.
+  * The publish operation seems to work differently if the subscriber has subscribed with a group or not.
   * @author Peter Nerg
   */
 class Publisher(mediator:ActorRef) extends Actor with ActorLogging{
@@ -29,7 +31,6 @@ class Publisher(mediator:ActorRef) extends Actor with ActorLogging{
 
 object PublisherStarter extends App with SameThreadExecutionContext with ClusterSettings {
   System.setProperty("config.file", "src/main/resources/akka-cfg/cluster-ext-member-tcp.conf");
-
   val actorSystem = ActorSystem(actorSystemName)
   val mediator = DistributedPubSub(actorSystem).mediator
   val cluster = Cluster(actorSystem)

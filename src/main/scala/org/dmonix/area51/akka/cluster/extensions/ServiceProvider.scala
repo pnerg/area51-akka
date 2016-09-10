@@ -32,7 +32,6 @@ object ServiceProviderStarter extends App with ClusterSettings {
   System.setProperty("config.file", "src/main/resources/akka-cfg/cluster-ext-member-tcp.conf");
   val actorSystem = ActorSystem(actorSystemName)
   val cluster = Cluster(actorSystem)
-  //even the seed node must join in as otherwise it won't be part of the cluster
   cluster.joinSeedNodes(seedNodes)
 
   val mediator = DistributedPubSub(actorSystem).mediator

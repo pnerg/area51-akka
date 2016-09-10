@@ -10,10 +10,13 @@ import org.dmonix.area51.akka.cluster.ClusterSettings
   * Acts as a registry and cluster seed for both the ServiceProvider and ServiceConsumer classes
   * That is a connection point for all other members to join in to.
   * It doesn't do anything apart from logging who joins/leaves.
+  * This class needs to be started before any of the classes: ServiceConsumer, ServiceProvider, Subscriber, Publisher
   * @author Peter Nerg
   */
 class ClusterExtSeed(cluster:Cluster) extends Actor with ActorLogging {
-  // subscribe to cluster changes, re-subscribe when restart
+  /**
+   *Subscribe to cluster changes, re-subscribe when restart
+   */
   override def preStart(): Unit = {
     cluster.subscribe(self, initialStateMode = InitialStateAsEvents,
       classOf[MemberEvent], classOf[UnreachableMember])
@@ -24,10 +27,11 @@ class ClusterExtSeed(cluster:Cluster) extends Actor with ActorLogging {
     case MemberUp(member) =>
       log.info(s"Member is Up: [${member.address}] with roles [${member.roles}]] and status [${member.status}] and unique address [${member.uniqueAddress}]")
     case UnreachableMember(member) =>
-      log.info("Member detected as unreachable: {}", member)
+      log.info(s"Member detected as unreachable: [$member]")
     case MemberRemoved(member, previousStatus) =>
-      log.info("Member is Removed: {} after {}", member.address, previousStatus)
-    case _: MemberEvent => // ignore
+      log.info(s"Member [$member] is removed, prev status [$previousStatus]")
+    case e:MemberEvent =>
+      log.info(s"Got member event [$e]")
     case a:Any ⇒
       log.warning(s"Cluster seed [$self] got unexpected message [$a] from [$sender]")
   }
@@ -48,6 +52,5 @@ object StartClusterExtSeed extends App with ClusterSettings {
   DistributedPubSub(actorSystem).mediator
 
   actorSystem.actorOf(Props(new ClusterExtSeed(cluster)))
-
 }
 

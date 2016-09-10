@@ -10,7 +10,8 @@ import org.dmonix.area51.akka.cluster.{ClusterSettings, SameThreadExecutionConte
 /**
   * Simple client class sending requests to be consumed by the ServiceProvider.
   * The class uses the Cluster Mediator to either unicast or broadcast message to services registered by the ServiceProvider
-  * Both the Send and SendAll messages take the actor name as argument. The actor itself may then live locally or remotely, it's all hidden for the client/user.
+  * Both the Send and SendAll messages take the actor name as argument.
+  * The actor itself may then live locally or remotely, it's all hidden for the client/user.
   * @param mediator
   */
 class ServiceConsumer(mediator:ActorRef) extends Actor with ActorLogging {
