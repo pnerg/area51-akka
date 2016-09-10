@@ -8,52 +8,52 @@
  * or in accordance with the terms and conditions stipulated in the agreement/contract
  * under which the program(s) have been supplied.
  */
-package org.dmonix.akka.cluster
+package org.dmonix.area51.akka.cluster
 
-import akka.actor.{Actor, ActorLogging, ActorSystem, Address, Props}
+import akka.actor.{Actor, ActorLogging, ActorSystem, Props}
 import akka.cluster.Cluster
 import akka.cluster.ClusterEvent._
-import scala.collection._
-
-object ClusterMember {
-  def props = Props(new ClusterMember)
-}
 
 /**
-  * @author Peter Nerg.
+  * This class just acts as a cluster seed.
+  * That is a connection point for all other member to join in to.
+  * It doesn't do anything apart from logging who joins/leaves.
+  * @author Peter Nerg
   */
-class ClusterMember extends Actor with ActorLogging  {
+class ClusterSeed(cluster:Cluster) extends Actor with ActorLogging {
 
-  val cluster = Cluster(context.system)
-  //members that join should NOT include themselves in the seed list
-  cluster.joinSeedNodes(immutable.Seq(Address("akka.tcp", "ClusterTest", "127.0.0.1", 6969)))
 
   // subscribe to cluster changes, re-subscribe when restart
   override def preStart(): Unit = {
     cluster.subscribe(self, initialStateMode = InitialStateAsEvents,
       classOf[MemberEvent], classOf[UnreachableMember])
   }
-
   override def postStop(): Unit = cluster.unsubscribe(self)
+
   def receive = {
     case MemberUp(member) =>
-      log.info(s"Member is Up: [${member.address} with roles [${member.roles}]]")
+      log.info(s"Member is Up: [${member.address}] with roles [${member.roles}]] and status [${member.status}] and unique address [${member.uniqueAddress}]")
     case UnreachableMember(member) =>
       log.info("Member detected as unreachable: {}", member)
     case MemberRemoved(member, previousStatus) =>
       log.info("Member is Removed: {} after {}", member.address, previousStatus)
     case _: MemberEvent => // ignore
+    case a:Any ⇒
+      log.warning(s"Cluster seed [$self] got unexpected message [$a] from [$sender]")
   }
-
 }
 
+object StartClusterSeed extends App with ClusterSettings {
+  //the only config file with hard wired port
+  System.setProperty("config.file", "src/main/resources/akka-cfg/cluster-seed-tcp.conf");
 
-object StartClusterMember extends App {
-  System.setProperty("config.file", "src/main/resources/akka-cfg/cluster-member-tcp.conf");
+  val actorSystem = ActorSystem(actorSystemName)
 
-  val actorSystem = ActorSystem("ClusterTest")
+  val cluster = Cluster(actorSystem)
 
-  actorSystem.actorOf(ClusterMember.props)
-  actorSystem.actorOf(ClusterMember.props)
+  //even the seed node must join in as otherwise it won't be part of the cluster
+  cluster.joinSeedNodes(seedNodes)
+
+  actorSystem.actorOf(Props(new ClusterSeed(cluster)))
 
 }
