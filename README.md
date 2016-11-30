@@ -18,6 +18,13 @@ This makes it rather hard wired, one can't just add a new "service" ad-hoc into 
 * Creating multiple actors that start a cluster in the same actor system will not start more clusters.   
 One will only end up with mutliple actors receiving the same cluster events
 
+###Singleton
+The singleton pattern will make sure only one member in the cluster starts the singleton actors.  
+It's possible to have multiple singleton actors but not on different members in the cluster.  
+Only the oldest member will start the actors. This makes it impossible to have heterogenous voting groups. 
+E.g member-1 starts one singleton with the name s1 and member-2 starts two singletons s1 and s2.  
+If member-1 is first to start it will register s1 but s2 will not be registered on member-2 even though it has a unique name.  This proves that the singleton concept is meant for the entire cluster, i.e. node/member is voted master/oldest and gets to start the singletons on that node. In other words all singletons must be started on all nodes otherwise singleton instances are lost in case mastership is moved.
+
 ##Cluster Extensions
 
 ### Publish/Subscribe
@@ -33,11 +40,3 @@ The benefit is that the receiving actor can be completely unaware it's part of a
 * Sending a message using the mediator towards a non-existing service/actor or sending before the cluster is setup just results in the message to be lost into void. No logging or nothing
 * Attempting to join into a cluster using the __DistributedPubSub__ mediator will yield error logs on the seed side if the seed side is not configured in the same way. So one can't have a generic set of seed nodes just to serve as seeds for the members to join in.  
 ```[INFO] [09/10/2016 08:23:37.827] [ClusterTest-akka.actor.default-dispatcher-23] [akka://ClusterTest/system/distributedPubSubMediator] Message [akka.cluster.pubsub.DistributedPubSubMediator$Internal$Status] from Actor[akka.tcp://ClusterTest@127.0.0.1:46925/system/distributedPubSubMediator#605893105] to Actor[akka://ClusterTest/system/distributedPubSubMediator] was not delivered. [1] dead letters encountered. This logging can be turned off or adjusted with configuration settings 'akka.log-dead-letters' and 'akka.log-dead-letters-during-shutdown'.```
-
-###Singleton
-The singleton pattern will make sure only one member in the cluster starts the singleton actors.  
-It's possible to have multiple singleton actors but not on different members in the cluster.  
-Only the oldest member will start the actors. This makes it impossible to have heterogenous voting groups. 
-E.g member-1 starts one singleton with the name s1 and member-2 starts two singletons s1 and s2.  
-If member-1 is first to start it will register s1 but s2 will not be registered on member-2 even though it has a unique name.  This proves that the singleton concept is meant for the entire cluster, i.e. node/member is voted master/oldest and gets to start the singletons on that node. In other words all singletons must be started on all nodes otherwise singleton instances are lost in case mastership is moved.
-
