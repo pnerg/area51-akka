@@ -25,14 +25,10 @@ class ClusterMember(cluster:Cluster) extends Actor with ActorLogging  {
       log.info("Member is Removed: {} after {}", member.address, previousStatus)
     case _: MemberEvent => // ignore
   }
-
 }
 
-
 object StartClusterMember extends App with ClusterSettings {
-  System.setProperty("config.file", "src/main/resources/akka-cfg/cluster-member-tcp.conf");
-
-  val actorSystem = ActorSystem(actorSystemName)
+  val actorSystem = ActorSystem(actorSystemName, Configuration.memberCfg)
 
   val cluster = Cluster(actorSystem)
 

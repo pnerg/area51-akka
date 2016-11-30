@@ -34,10 +34,7 @@ class ClusterSeed(cluster:Cluster) extends Actor with ActorLogging {
 }
 
 object StartClusterSeed extends App with ClusterSettings {
-  //the only config file with hard wired port
-  System.setProperty("config.file", "src/main/resources/akka-cfg/cluster-seed-tcp.conf");
-
-  val actorSystem = ActorSystem(actorSystemName)
+  val actorSystem = ActorSystem(actorSystemName, Configuration.seedCfg(6969))
 
   val cluster = Cluster(actorSystem)
 
