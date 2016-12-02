@@ -4,7 +4,7 @@ version := "0.1-SNAPSHOT"
 
 scalaVersion := "2.11.7"
 
-val akkaVersion = "2.4.11"
+val akkaVersion = "2.4.0"
 
 scalacOptions <++= scalaVersion map { (v: String) => 
   if (v.trim.startsWith("2.1"))
@@ -24,7 +24,6 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-cluster" % akkaVersion,
   "com.typesafe.akka" %% "akka-cluster-tools" % akkaVersion,
   "com.typesafe.akka" %% "akka-persistence" % akkaVersion,
-  "com.codacy" %% "scala-consul" % "2.0.2",
   "org.scalatest" % "scalatest_2.11" % "2.2.4" % "test", 
   "com.typesafe.akka" %% "akka-testkit" % akkaVersion % "test",
   "com.typesafe.akka" %% "akka-persistence-tck" % akkaVersion % "test"
