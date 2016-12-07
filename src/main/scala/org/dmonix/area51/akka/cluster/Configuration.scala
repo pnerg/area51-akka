@@ -7,6 +7,26 @@ import com.typesafe.config.{Config, ConfigFactory}
   */
 object Configuration {
 
+  implicit class StringCfg(s: String) {
+       def asCfg = ConfigFactory.parseString(s.stripMargin)
+  }
+
+  def remotingCfg(port:Int = 0) :Config = {
+    s"""akka {
+      |  actor {
+      |    provider = "akka.remote.RemoteActorRefProvider"
+      |  }
+      |
+      |  remote {
+      |  	enabled-transports = ["akka.remote.netty.tcp"]
+      |  	netty.tcp {
+      |  		hostname = "127.0.0.1"
+      |  		port = $port
+      |  	}
+      |  }
+      |}""".asCfg
+  }
+
 
   /**
     * Provides a actor system configuration for a seed node.
@@ -23,7 +43,7 @@ object Configuration {
   def memberCfg:Config = memberCfg(0, "member")
 
 
-  private def memberCfg(port:Int, role:String):Config = ConfigFactory.parseString(
+  private def memberCfg(port:Int, role:String):Config =
     s"""akka {
       |  actor {
       |    provider = "akka.cluster.ClusterActorRefProvider"
@@ -40,6 +60,7 @@ object Configuration {
       |    roles = ["$role"]
       |    auto-down-unreachable-after = 10s
       |  }
-      |}""".stripMargin)
+      |}""".asCfg
+
 
 }
