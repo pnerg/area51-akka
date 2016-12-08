@@ -26,27 +26,8 @@ class SlowStartActorActor(startDelay:FiniteDuration) extends Actor with ActorLog
 
 }
 
-/**
-  * Simple example on how one can go about to verify that an actor (ActorRef) exists and is fully started.
-  * Use case could be when bootstrapping a number of actors that potentially have long start phases.
-  * @author Peter Nerg
-  */
-object AwaitActorStartup extends App {
-  val as = ActorSystem("AwaitActorStartup")
-//  val x = (Random.nextInt(3000).millis
-
-  //play around with the start delay and wait time to get various results
-  val ref1 = as.actorOf(Props(new SlowStartActorActor(3.seconds)), "SlowStartActorActor-1")
-  val ref2 = as.actorOf(Props(new SlowStartActorActor(0.seconds)), "SlowStartActorActor-2")
-  val ref3 = as.actorOf(Props(new SlowStartActorActor(2.seconds)), "SlowStartActorActor-3")
-  waitForActors(Seq(ref1, ref2, ref3))(2.seconds)
-
-  //here only to cut the actor system after the above tests have been performed
-  Await.ready(as.terminate(), 15.seconds)
-
-  private def waitForActors(actors: Seq[ActorRef])(implicit waitTime:FiniteDuration) = {
-    import scala.concurrent.ExecutionContext.Implicits.global
-
+object ActorStartWaiter {
+  def waitForActors(actors: Seq[ActorRef])(implicit as:ActorSystem, waitTime:FiniteDuration, ec:ExecutionContext) = {
 
     //results in a sequence with Future[Boolean]
     val resolveFutures = actors.
@@ -77,8 +58,35 @@ object AwaitActorStartup extends App {
     }
   }
 
-  private def resolve(actor:ActorRef)(implicit waitTime:FiniteDuration):Future[ActorRef] = {
+  private def resolve(actor:ActorRef)(implicit as:ActorSystem, waitTime:FiniteDuration):Future[ActorRef] = {
     as.actorSelection(actor.path).resolveOne(waitTime)
   }
+
+}
+
+/**
+  * Simple example on how one can go about to verify that an actor (ActorRef) exists and is fully started.
+  * Use case could be when bootstrapping a number of actors that potentially have long start phases.
+  * @author Peter Nerg
+  */
+object AwaitActorStartup extends App {
+  import ActorStartWaiter._
+  import scala.concurrent.ExecutionContext.Implicits.global
+  implicit val as = ActorSystem("AwaitActorStartup")
+  implicit val maxWaitTime = 2.seconds
+
+  //play around with the start delay and wait time to get various results
+  val actors = Seq(
+    as.actorOf(Props(new SlowStartActorActor(3.seconds)), "SlowStartActorActor-1"),
+    as.actorOf(Props(new SlowStartActorActor(0.seconds)), "SlowStartActorActor-2"),
+    as.actorOf(Props(new SlowStartActorActor(2.seconds)), "SlowStartActorActor-3")
+  )
+
+  //will block and wait for all actors to either start or the timeout to pass
+  waitForActors(actors)
+
+  //here only to cut the actor system after the above tests have been performed
+  Await.ready(as.terminate(), 15.seconds)
+
 
 }
