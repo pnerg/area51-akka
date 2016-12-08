@@ -27,7 +27,7 @@ class SlowStartActorActor(startDelay:FiniteDuration) extends Actor with ActorLog
 }
 
 object ActorStartWaiter {
-  def waitForActors(actors: Seq[ActorRef])(implicit as:ActorSystem, waitTime:FiniteDuration, ec:ExecutionContext) = {
+  def waitForActors(actors: Seq[ActorRef])(implicit as:ActorSystem, waitTime:FiniteDuration, ec:ExecutionContext):Boolean = {
 
     //results in a sequence with Future[Boolean]
     val resolveFutures = actors.
@@ -40,12 +40,7 @@ object ActorStartWaiter {
 
     //double the wait time for the Future so we don't time out here
     //this timeout will never anyways be reached, it's the resolveOne timeout that dictates
-    if(Await.result(totalResult, waitTime*2)) {
-      println("Successfully resolved all actors")
-    }
-    else {
-      println("Failed to resolve one or more actors")
-    }
+    Await.result(totalResult, waitTime*2)
   }
 
   private def isSuccess(f:Future[ActorRef])(implicit ec:ExecutionContext):Future[Boolean] = {
@@ -83,7 +78,12 @@ object AwaitActorStartup extends App {
   )
 
   //will block and wait for all actors to either start or the timeout to pass
-  waitForActors(actors)
+  if(waitForActors(actors)) {
+    println("Successfully resolved all actors")
+  }
+  else {
+    println("Failed to resolve one or more actors")
+  }
 
   //here only to cut the actor system after the above tests have been performed
   Await.ready(as.terminate(), 15.seconds)
