@@ -1,4 +1,4 @@
-package org.dmonix.area51.akka.cluster
+package org.dmonix.area51.akka
 
 import com.typesafe.config.{Config, ConfigFactory}
 

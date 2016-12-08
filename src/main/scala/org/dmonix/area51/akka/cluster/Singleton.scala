@@ -3,6 +3,7 @@ package org.dmonix.area51.akka.cluster
 import akka.actor.{Actor, ActorSystem, Props}
 import akka.cluster.Cluster
 import akka.cluster.singleton.{ClusterSingletonManager, ClusterSingletonManagerSettings, ClusterSingletonProxy, ClusterSingletonProxySettings}
+import org.dmonix.area51.akka.Configuration
 
 case object Terminated
 case class Request(msg:String)

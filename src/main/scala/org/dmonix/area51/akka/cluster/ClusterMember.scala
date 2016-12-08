@@ -3,6 +3,7 @@ package org.dmonix.area51.akka.cluster
 import akka.actor.{Actor, ActorLogging, ActorSystem, Props}
 import akka.cluster.{Cluster, Member}
 import akka.cluster.ClusterEvent._
+import org.dmonix.area51.akka.Configuration
 
 import scala.collection.mutable
 
