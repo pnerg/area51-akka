@@ -36,7 +36,7 @@ object ActorStartWaiter {
 
     //results in a single Future[Boolean]
     val totalResult = Future.sequence(resolveFutures) //sequences the Seq[Future[Boolean]] to a single future with Seq[Boolean]
-      .map(result => result.forall(_ == true)) //maps/reduces the Seq[Boolean] to a single boolean
+      .map(_.forall(_ == true)) //maps/reduces the Seq[Boolean] to a single boolean
 
     //double the wait time for the Future so we don't time out here
     //this timeout will never anyways be reached, it's the resolveOne timeout that dictates
