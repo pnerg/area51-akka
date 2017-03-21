@@ -18,6 +18,7 @@ scalacOptions in (Compile, doc) ++= Seq("-doc-root-content", baseDirectory.value
 scalacOptions in (Compile, doc) ++= Seq("-doc-footer", "Copyright (c) 2015 Peter Nerg, Apache License v2.0.")
 
 libraryDependencies ++= Seq(
+  "org.slf4j" % "slf4j-log4j12" % "1.7.5",
   "com.typesafe.akka" %% "akka-actor" % akkaVersion,
   "com.typesafe.akka" %% "akka-remote" % akkaVersion,
   "com.typesafe.akka" %% "akka-slf4j" % akkaVersion,
@@ -27,5 +28,7 @@ libraryDependencies ++= Seq(
   "com.codacy" %% "scala-consul" % "2.0.2",
   "org.scalatest" % "scalatest_2.11" % "2.2.4" % "test", 
   "com.typesafe.akka" %% "akka-testkit" % akkaVersion % "test",
-  "com.typesafe.akka" %% "akka-persistence-tck" % akkaVersion % "test"
+  "com.typesafe.akka" %% "akka-persistence-tck" % akkaVersion % "test",
+  "junit" % "junit" % "4.11" % "test",
+  "org.mockito" % "mockito-all" % "1.10.19" % "test"
 )
