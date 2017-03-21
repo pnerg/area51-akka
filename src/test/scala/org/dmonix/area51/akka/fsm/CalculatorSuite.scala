@@ -13,7 +13,7 @@ class CalculatorSuite extends BaseActorTestKit("CalculatorSuite"){
   def actorName = "Calculator-"+Random.nextInt(100)
 
   "The calculator" must {
-    "Sum up two values correctly" in {
+    "Add two values correctly" in {
       val calculator = system.actorOf(Calculator.props(), actorName)
 
       calculator ! FirstValue(1)
@@ -23,7 +23,7 @@ class CalculatorSuite extends BaseActorTestKit("CalculatorSuite"){
       expectMsg(Result(2))
     }
 
-    "Subtract up two values correctly" in {
+    "Subtract two values correctly" in {
       val calculator = system.actorOf(Calculator.props(), actorName)
 
       calculator ! FirstValue(2)
@@ -43,7 +43,6 @@ class CalculatorSuite extends BaseActorTestKit("CalculatorSuite"){
       calculator ! Equals
 
       expectMsg(Result(20))
-
     }
   }
 
