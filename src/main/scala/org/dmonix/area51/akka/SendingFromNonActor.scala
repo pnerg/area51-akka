@@ -1,6 +1,6 @@
 package org.dmonix.area51.akka
 
-import akka.actor.{Actor, ActorSystem, Inbox, Props}
+import akka.actor.{Actor, ActorLogging, ActorSystem, Inbox, Props}
 
 import scala.concurrent.duration.DurationInt
 import akka.pattern.ask
@@ -10,10 +10,11 @@ import scala.concurrent.Await
 case object Ping
 case object Pong
 
-class PongActor extends Actor {
+class PongActor extends Actor
+  with ActorLogging {
   override def receive = {
     case Ping =>
-      println("Received Ping")
+      log.info("Received Ping")
       Thread.sleep(7000)
       sender ! Pong
   }
@@ -25,7 +26,7 @@ class PongActor extends Actor {
   */
 object SendingFromNonActor extends App {
   val as = ActorSystem("SendingFromNonActor")
-  val ref = as.actorOf(Props(new PongActor))
+  val ref = as.actorOf(Props(new PongActor), "Pong")
 
   implicit val timeout = 5.seconds
   val a = ask(ref, Ping)(Timeout(timeout))
