@@ -10,7 +10,7 @@ import scala.util.Random
   */
 class CalculatorSuite extends BaseActorTestKit("CalculatorSuite"){
 
-  def actorName = "Calculator-"+Random.nextInt(100)
+  private def actorName = "Calculator-"+Random.nextInt(100)
 
   "The calculator" must {
     "Add two values correctly" in {
