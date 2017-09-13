@@ -2,13 +2,13 @@
 Test area for my experiments with Akka and its sub-projects.   
 Also works as general notes for myself on my findings.
 
-#Links
+# Links
 http://doc.akka.io/docs/akka/2.4.0/common/cluster.html   
 http://doc.akka.io/docs/akka/2.4.0/scala/cluster-usage.html
 
-#Findings
+# Findings
 
-##Akka Cluster
+## Akka Cluster
 
 * All members in the cluster must have the same name on the actor system.  
 Trying to join in to a cluster with a different actor system name will render logging and dropped messages
@@ -18,14 +18,14 @@ This makes it rather hard wired, one can't just add a new "service" ad-hoc into 
 * Creating multiple actors that start a cluster in the same actor system will not start more clusters.   
 One will only end up with mutliple actors receiving the same cluster events
 
-###Singleton
+### Singleton
 The singleton pattern will make sure only one member in the cluster starts the singleton actors.  
 It's possible to have multiple singleton actors but not on different members in the cluster.  
 Only the oldest member will start the actors. This makes it impossible to have heterogenous voting groups. 
 E.g member-1 starts one singleton with the name s1 and member-2 starts two singletons s1 and s2.  
 If member-1 is first to start it will register s1 but s2 will not be registered on member-2 even though it has a unique name.  This proves that the singleton concept is meant for the entire cluster, i.e. node/member is voted master/oldest and gets to start the singletons on that node. In other words all singletons must be started on all nodes otherwise singleton instances are lost in case mastership is moved.
 
-##Cluster Extensions
+## Cluster Extensions
 
 ### Publish/Subscribe
 Uses the standard publish/subscribe pattern. Where one actor subscribes to a topic and some other actor publishes a message to the same topic.
